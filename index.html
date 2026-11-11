@@ -228,12 +228,10 @@ function drawPlan(active){
 function showGuest(i){
   const [name, tid, n] = GUESTS[i];
   const t = tableById(tid) || {id:tid,name:""};
-  const mates = GUESTS.filter((g,j)=>g[1]===tid && j!==i);
   $("#out").innerHTML = `<div class="result">
     <div class="greet"><b>${esc(name)}</b>${n>1?`（${n} 位）`:""}，歡迎您！您的座位在</div>
     <div class="tableno"><span class="label">TABLE</span><span class="num">${t.id}</span></div>
     <div class="tablename">第 ${t.id} 桌${t.name?"・"+esc(t.name):""}</div>
-    ${mates.length?`<div class="mates">同桌的還有<ul>${mates.map(m=>`<li>${esc(m[0])}${m[2]>1?` ${m[2]}位`:""}</li>`).join("")}</ul></div>`:""}
   </div>`;
   drawPlan(t.id);
   setTimeout(()=>$("#out .result")?.scrollIntoView({behavior:"smooth",block:"start"}),50);
