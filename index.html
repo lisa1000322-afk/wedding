@@ -244,7 +244,7 @@ const CONFIG = {
   formUrl: "https://docs.google.com/forms/d/e/1FAIpQLScA1FXJBCjQMY5KnDny8FVmI7R0XJ9I35DU5TX-eYevuUQ2dA/viewform",  // 祝福留言的 Google 表單連結
   story: { subtitle: "", paragraphs: [] },  // 新人故事
   schedule: [
-    {time:"17:30", title:"迎賓・收禮", note:"請先到左側入口的收禮・報到台，再入座"},
+    {time:"17:30", title:"迎賓・收禮", note:"請先到入口的收禮・報到台，再入座"},
     {time:"18:30", title:"開席", note:"新人進場"},
     {time:"",      title:"新人敬酒", note:"新人會到每一桌致謝"},
     {time:"",      title:"送客", note:"新人在門口送客，一起合照留念"},
@@ -337,7 +337,7 @@ const tableById = id => TABLES.find(t=>t.id===id);
 
 /* ---------- Floor plan ---------- */
 function drawPlan(active){
-  const X0=130,Y0=140,W=1150,H=1540,R=40;
+  const X0=130,Y0=140,W=1150,H=1550,R=40;
   const ser='font-family="Noto Serif TC"';
   let g = `<svg viewBox="${X0} ${Y0} ${W} ${H}" role="img" aria-label="座位平面圖">
     <rect x="136" y="143" width="1119" height="1460" fill="none" stroke="#C9AE7A" stroke-width="2"/>
@@ -353,8 +353,8 @@ function drawPlan(active){
       <circle cx="${t.x}" cy="${t.y}" r="${R}" style="stroke-width:4"/>
       <text x="${t.x}" y="${t.y}" style="font-size:36px">${t.id}</text></g>`;
   }
-  for(const ex of [345,800,1150]) g += `<text x="${ex}" y="1640" text-anchor="middle" font-size="26" fill="#5A2430" ${ser} letter-spacing="8">入口</text>`;
-  g += `<text x="470" y="1662" text-anchor="middle" font-size="22" fill="#8a7a6f" ${ser}>（收禮・報到台在左側入口）</text>`;
+  g += `<path d="M770 1603 l30 -26 l30 26" fill="none" stroke="#C9AE7A" stroke-width="3"/><text x="800" y="1640" text-anchor="middle" font-size="28" fill="#5A2430" ${ser} letter-spacing="8" font-weight="600">入口</text>`;
+  g += `<text x="800" y="1672" text-anchor="middle" font-size="22" fill="#8a7a6f" ${ser}>收禮・報到台在入口處</text>`;
   g += `</svg>`;
   $("#plan").innerHTML = g + `<div class="legend">${active?"粉色圓圈就是您的座位（面對舞台）":"巴黎廳＋羅馬廳 座位平面圖・面對舞台"}</div>`;
 }
@@ -367,7 +367,7 @@ function showGuest(i){
     <div class="greet"><b>${esc(name)}</b>${n>1?`（${n} 位）`:""}，歡迎您！您的座位在</div>
     <div class="tableno"><span class="label">TABLE</span><span class="num">${t.id}</span></div>
     <div class="tablename">第 ${t.id} 桌${t.name?"・"+esc(t.name):""}</div>
-    <div class="remind">抵達後請先到<b>左側入口的「收禮・報到台」</b>，再入座喔</div>
+    <div class="remind">抵達後請先到<b>入口的「收禮・報到台」</b>，再入座喔</div>
   </div>`;
   drawPlan(t.id);
   setTimeout(()=>$("#out .result")?.scrollIntoView({behavior:"smooth",block:"start"}),50);
