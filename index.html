@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我們的婚禮｜座位查詢與照片分享</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root{
+    --ivory:#fbf7f1; --paper:#ffffff; --ink:#3b302a; --muted:#8a7a6f;
+    --rose:#b5776b; --rose-soft:#f1e1db; --gold:#b89a5e; --line:#e8ddd2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Noto Sans TC",system-ui,sans-serif;background:var(--ivory);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px}
+
+  /* Hero */
+  header{text-align:center;padding:64px 20px 40px;position:relative}
+  .eyebrow{font-family:"Cormorant Garamond",serif;font-style:italic;color:var(--gold);font-size:20px;letter-spacing:.08em}
+  h1{font-family:"Noto Serif TC",serif;font-weight:700;font-size:clamp(34px,8vw,52px);letter-spacing:.12em;margin:10px 0 6px}
+  h1 .amp{font-family:"Cormorant Garamond",serif;font-style:italic;color:var(--rose);font-weight:500;margin:0 .25em}
+  .meta{color:var(--muted);font-size:15px;letter-spacing:.06em}
+  .divider{width:120px;height:14px;margin:24px auto 0;display:block}
+  nav{display:flex;gap:10px;justify-content:center;margin-top:28px;flex-wrap:wrap}
+  nav a{text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--paper);padding:10px 22px;border-radius:999px;font-size:15px;transition:.2s}
+  nav a:hover{border-color:var(--rose);color:var(--rose)}
+
+  section{padding:28px 0 44px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:28px 24px;box-shadow:0 6px 30px -18px rgba(90,60,40,.25)}
+  h2{font-family:"Noto Serif TC",serif;font-size:24px;letter-spacing:.1em;text-align:center;margin-bottom:4px}
+  .sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:22px}
+
+  /* Search */
+  .search{position:relative}
+  .search input{width:100%;font:inherit;font-size:18px;padding:16px 52px 16px 20px;border:1.5px solid var(--line);border-radius:14px;background:var(--ivory);color:var(--ink);outline:none;transition:.2s}
+  .search input:focus{border-color:var(--rose);background:#fff}
+  .search svg{position:absolute;right:18px;top:50%;transform:translateY(-50%);color:var(--muted)}
+  .hint{font-size:13px;color:var(--muted);margin-top:10px;text-align:center}
+  .choices{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;justify-content:center}
+  .choices button{font:inherit;font-size:15px;border:1px solid var(--line);background:var(--ivory);padding:8px 16px;border-radius:999px;cursor:pointer;color:var(--ink)}
+  .choices button:hover{border-color:var(--rose);color:var(--rose)}
+  .empty{text-align:center;color:var(--muted);margin-top:18px;font-size:15px}
+
+  .result{margin-top:22px;scroll-margin-top:16px;text-align:center;animation:rise .4s ease}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .greet{font-size:16px;color:var(--muted)}
+  .greet b{color:var(--ink);font-weight:600}
+  .tableno{font-family:"Noto Serif TC",serif;margin:8px 0 4px}
+  .tableno .label{display:block;font-size:14px;letter-spacing:.3em;color:var(--rose)}
+  .tableno .num{font-size:72px;font-weight:700;line-height:1.1;color:var(--ink)}
+  .tablename{font-size:15px;color:var(--muted)}
+  .mates{margin-top:18px;font-size:14px;color:var(--muted)}
+  .mates ul{list-style:none;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+  .mates li{background:var(--rose-soft);color:var(--ink);padding:4px 12px;border-radius:999px;font-size:14px}
+
+  .plan{margin-top:26px}
+  .plan svg{width:100%;height:auto;display:block}
+  .plan .t circle{fill:#fff;stroke:var(--line);stroke-width:2;transition:.3s}
+  .plan .t text{font-family:"Noto Serif TC",serif;font-size:15px;fill:var(--muted);text-anchor:middle;dominant-baseline:central}
+  .plan .t.on circle{fill:var(--rose);stroke:var(--rose)}
+  .plan .t.on text{fill:#fff;font-weight:700}
+  .plan .pulse{fill:none;stroke:var(--rose);stroke-width:2;opacity:.6;transform-box:fill-box;transform-origin:center;animation:pulse 1.6s ease-out infinite}
+  @keyframes pulse{from{transform:scale(1);opacity:.6}to{transform:scale(1.7);opacity:0}}
+  .legend{font-size:12px;color:var(--muted);text-align:center;margin-top:6px}
+
+  /* Photos */
+  .steps{display:grid;gap:12px;margin:6px 0 24px}
+  .step{display:flex;gap:14px;align-items:flex-start}
+  .step .n{flex:none;width:28px;height:28px;border-radius:50%;background:var(--rose-soft);color:var(--rose);font-weight:600;display:grid;place-items:center;font-size:14px}
+  .btn{display:block;text-align:center;text-decoration:none;background:var(--rose);color:#fff;font-size:17px;font-weight:500;padding:16px;border-radius:14px;letter-spacing:.08em;transition:.2s}
+  .btn:hover{filter:brightness(1.06)}
+  .btn.disabled{background:#d9cbc3;pointer-events:none}
+  .qrbox{display:flex;align-items:center;gap:18px;margin-top:22px;padding-top:22px;border-top:1px dashed var(--line)}
+  #qr{flex:none;background:#fff;padding:8px;border-radius:10px;border:1px solid var(--line)}
+  #qr img,#qr canvas{display:block;width:104px!important;height:104px!important}
+  .qrbox p{font-size:14px;color:var(--muted)}
+  .tag{display:inline-block;font-size:13px;color:var(--rose);background:var(--rose-soft);padding:3px 10px;border-radius:6px;margin-top:6px}
+  .notice{font-size:13px;color:#a06a3c;background:#fbf0e3;border-radius:10px;padding:10px 14px;margin-top:14px;text-align:center}
+
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 20px 50px;font-family:"Cormorant Garamond",serif;font-style:italic;letter-spacing:.06em}
+  footer span{font-size:18px;color:var(--gold)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Welcome to our wedding</div>
+  <h1><span id="groom"></span><span class="amp">&amp;</span><span id="bride"></span></h1>
+  <div class="meta" id="meta"></div>
+  <svg class="divider" viewBox="0 0 120 14" aria-hidden="true"><path d="M0 7h46M74 7h46" stroke="#b89a5e" stroke-width="1"/><path d="M60 2c-3-3-8 0-6 4l6 6 6-6c2-4-3-7-6-4z" fill="#b5776b"/></svg>
+  <nav>
+    <a href="#seat">找我的座位</a>
+    <a href="#photos">上傳照片</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section id="seat">
+    <div class="card">
+      <h2>找我的座位</h2>
+      <p class="sub">輸入您的姓名，馬上告訴您坐哪一桌</p>
+      <form class="search" id="searchForm" autocomplete="off">
+        <input id="q" type="search" placeholder="請輸入姓名，例如：王銀姬" aria-label="輸入姓名">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </form>
+      <div class="hint">輸入部分姓名也可以・找不到自己可試試家人的名字</div>
+      <div id="out"></div>
+      <div class="plan" id="plan"></div>
+    </div>
+  </section>
+
+  <section id="photos">
+    <div class="card">
+      <h2>分享您拍的照片</h2>
+      <p class="sub">把今天的美好瞬間留給我們，謝謝您！</p>
+      <div class="steps">
+        <div class="step"><div class="n">1</div><div>點下方按鈕，打開我們的共享資料夾（手機會開啟「雲端硬碟」App）</div></div>
+        <div class="step"><div class="n">2</div><div>點右下角「＋」→「上傳」，選擇今天拍的照片或影片（需登入 Google 帳號）</div></div>
+        <div class="step"><div class="n">3</div><div>上傳完成！所有賓客都能在資料夾裡一起欣賞</div></div>
+      </div>
+      <a class="btn" id="albumBtn" href="#" target="_blank" rel="noopener">打開共享資料夾・上傳照片</a>
+      <div class="notice" id="albumNotice" hidden>（新人還沒設定相簿連結）</div>
+      <div class="qrbox" id="qrbox">
+        <div id="qr"></div>
+        <p>用另一支手機也想上傳？<br>掃描這個 QR Code 直接進入資料夾<span class="tag" id="albumTag"></span></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><span>Thank you</span><br>謝謝您來參加我們的婚禮</footer>
+
+<script>
+/* =========================================================
+   婚禮設定：只要改這一區就好
+   ========================================================= */
+const CONFIG = {
+  groom: "王駿峰",
+  bride: "黃慧馨",
+  date: "2026 年 11 月 14 日（六）",
+  venue: "小班長的家",
+  albumName: "Google 雲端硬碟",
+  albumUrl:  "https://drive.google.com/drive/folders/1EIOuawiyi6QQNC4fB9Srg2hKzX8Dej4n",
+};
+
+// 平面圖：左右各兩排、中間紅毯；row 由舞台往大門，col 1/2 在紅毯左、4/5 在紅毯右
+const TABLES = [
+  {id:4,name:"王家／陳家",r:1,c:1},{id:1,name:"主桌",r:1,c:2},{id:3,name:"新娘家人 B",r:1,c:4},{id:2,name:"新娘家人 A",r:1,c:5},
+  {id:5,name:"林家",r:2,c:1},{id:6,name:"黃家 A",r:2,c:2},{id:7,name:"黃家 B",r:2,c:4},{id:8,name:"施家／黃家",r:2,c:5},
+  {id:9,name:"陳／嚴／楊",r:3,c:1},{id:10,name:"陳／施／葉",r:3,c:2},{id:11,name:"王家／陳家",r:3,c:4},{id:12,name:"楊／林／蘇",r:3,c:5},
+  {id:13,name:"嚴家／林家／巫家",r:4,c:1},{id:14,name:"媽媽朋友",r:4,c:2},{id:15,name:"爸爸朋友 A／李家",r:4,c:4},{id:16,name:"爸爸朋友 B",r:4,c:5},
+  {id:17,name:"爸爸朋友 C",r:5,c:1},{id:18,name:"爸爸朋友 D",r:5,c:2},{id:19,name:"好友同桌",r:5,c:4},{id:20,name:"廠商 B",r:5,c:5},
+  {id:21,name:"廠商 C",r:6,c:1},{id:22,name:"好友同桌",r:6,c:2},{id:23,name:"廠商 E",r:6,c:4},{id:24,name:"廠商 F",r:6,c:5},
+  {id:25,name:"伴娘桌",r:7,c:1},{id:26,name:"伴郎桌",r:7,c:2},{id:30,name:"員工 A",r:7,c:4},{id:31,name:"員工 B",r:7,c:5},
+  {id:28,name:"新郎朋友 B",r:8,c:1},{id:29,name:"新郎朋友 C",r:8,c:2},{id:27,name:"新郎朋友 A",r:8,c:4},{id:32,name:"工作人員",r:8,c:5},
+];
+
+// 賓客名單：[姓名, 桌號, 人數]（人數＝含本人同行幾位）
+const GUESTS = [
+  ["王進旺",1,1],["新娘家人",2,10],["新娘家人",3,10],
+  ["王銀姬",4,6],["陳淑美",4,4],["林蔡于",5,10],
+  ["黃青春",6,6],["何明池",6,3],["黃清南",7,3],["黃長益",7,6],
+  ["施明哲",8,3],["施串忠",8,2],["施明典",8,2],["黃清長",8,3],
+  ["陳國川",9,1],["嚴首",9,4],["楊聰敏",9,2],["陳明源",9,3],
+  ["陳淑惠",10,4],["施政豪",10,2],["陳明傑",10,1],["葉勝河",10,3],
+  ["王進生",11,6],["陳明輝",11,4],
+  ["楊錦煌",12,1],["林抱治",12,2],["林正川",12,1],["蘇文龍",12,2],["楊清河",12,2],
+  ["嚴明福",13,6],["林嘉莉",13,1],["巫汶聰",13,2],
+  ["邱鈺惠",14,1],["孫能財",14,2],["秀霞",14,2],["採茶",14,2],["林榮芳",14,2],["許鴻裕",14,1],
+  ["王新",15,3],["鄭金發",15,3],["李景隆",15,4],
+  ["楊溪全",16,2],["黃增鍊",16,2],["陳禎和",16,2],["吳明永",16,2],["陳信宏",16,2],
+  ["林清權",17,2],["林瑞祥",17,2],["李國棋",17,2],["劉建興",17,2],["黃緯環",17,2],
+  ["林進盛",18,1],["曾慶進",18,1],["林進安",18,1],["吳茂順",18,2],["林文生",18,1],["林文語",18,2],["洪家榮",18,2],
+  ["陳信宏",19,3],["陳輝明",19,2],["陳世育",19,2],["林漢昌",19,3],
+  ["詹文錦",20,2],["葉佳政",20,2],["張炎星",20,6],
+  ["江仁啓",21,2],["曾忠敏",21,3],["謝金來",21,1],["黃俊鈞",21,2],["陳飛松",21,2],
+  ["黃教科",22,2],["張芳漢",22,2],["陳忠順",22,2],["童進輝",22,2],["肇益營造",22,2],
+  ["黃文富",23,2],["黃琮淵",23,3],["李文德",23,1],["劉如意",23,2],["黃柏隆",23,2],
+  ["王永志",24,2],["陳敬斌",24,3],["邱三德",24,2],["鄭志松",24,2],["陳志平",24,1],
+  ["伴娘",25,6],["王雅媚",25,2],["楊永淂",25,2],
+  ["陳映霖",26,1],["洪國彰",26,1],["洪琢鈞",26,1],["劉東樺",26,1],["盧育麟",26,1],["鄭吉晟",26,1],["蘇琮文",26,1],["黃宇呈",26,1],["謝榮茂",26,1],
+  ["吳兆鈞",27,3],["吴泓俊",27,1],["許晏堃",27,1],["黃恆超",27,1],["何泊呈",27,1],["陳泓銘",27,2],
+  ["羅文凱",28,2],["許傑勛",28,4],["黃仁威",28,2],["蕭景崧",28,2],
+  ["陳渝雯",29,4],["陳子琳",29,1],["洪楷涵",29,1],["許嘉紋",29,2],["張宛容",29,2],
+  ["蔡榮波",30,2],["許永昆",30,2],["塗賜來",30,3],["游凱斌",30,3],
+  ["劉永明",31,1],["黃逢瑲",31,2],["張欣眾",31,1],["張永本",31,1],["工作人員",31,1],["吳世煌",31,1],["吳堂棋",31,2],
+  ["工作人員",32,10],
+];
+/* ========================================================= */
+
+const $ = s => document.querySelector(s);
+$("#groom").textContent = CONFIG.groom;
+$("#bride").textContent = CONFIG.bride;
+$("#meta").innerHTML = `${esc(CONFIG.date)}<br>${esc(CONFIG.venue)}`;
+
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+const norm = s => s.replace(/\s+/g,"").toLowerCase();
+const tableById = id => TABLES.find(t=>t.id===id);
+
+/* ---------- Floor plan ---------- */
+function drawPlan(active){
+  const W=360, top=46, rowH=46, rows=8, H=top+rows*rowH+40, R=17;
+  const colX={1:42,2:112,4:248,5:318};
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="座位平面圖">
+    <rect x="${W/2-90}" y="6" width="180" height="26" rx="4" fill="#5A2430"/>
+    <text x="${W/2}" y="19" text-anchor="middle" dominant-baseline="central" font-size="13" fill="#E9D7A6" font-family="Noto Serif TC" letter-spacing="8">舞台</text>
+    <rect x="${W/2-22}" y="${top-8}" width="44" height="${rows*rowH+8}" fill="#f1e1db"/>
+    <text x="${W/2}" y="${top+rows*rowH/2}" text-anchor="middle" font-size="13" fill="#b5776b" font-family="Noto Serif TC" writing-mode="tb" letter-spacing="10">紅毯</text>`;
+  for(const t of TABLES){
+    const on=t.id===active, x=colX[t.c], y=top+(t.r-.5)*rowH;
+    g += `<g class="t${on?' on':''}">
+      ${on?`<circle class="pulse" cx="${x}" cy="${y}" r="${R}"/>`:''}
+      <circle cx="${x}" cy="${y}" r="${R}"/>
+      <text x="${x}" y="${y}">${t.id}</text></g>`;
+  }
+  const dy=top+rows*rowH+8;
+  g += `<path d="M${W/2-60} ${dy}h120v14a14 14 0 0 1-14 14h-92a14 14 0 0 1-14-14z" fill="#fff" stroke="#C9AE7A"/>
+    <text x="${W/2}" y="${dy+14}" text-anchor="middle" dominant-baseline="central" font-size="13" fill="#5A2430" font-family="Noto Serif TC" letter-spacing="8">大門</text></svg>`;
+  $("#plan").innerHTML = g + `<div class="legend">${active?"粉色圓圈就是您的座位・從大門進來沿紅毯往舞台方向走":"宴會廳座位平面圖（示意，實際以現場為準）"}</div>`;
+}
+
+/* ---------- Search ---------- */
+function showGuest(i){
+  const [name, tid, n] = GUESTS[i];
+  const t = tableById(tid) || {id:tid,name:""};
+  const mates = GUESTS.filter((g,j)=>g[1]===tid && j!==i);
+  $("#out").innerHTML = `<div class="result">
+    <div class="greet"><b>${esc(name)}</b>${n>1?`（${n} 位）`:""}，歡迎您！您的座位在</div>
+    <div class="tableno"><span class="label">TABLE</span><span class="num">${t.id}</span></div>
+    <div class="tablename">第 ${t.id} 桌${t.name?"・"+esc(t.name):""}</div>
+    ${mates.length?`<div class="mates">同桌的還有<ul>${mates.map(m=>`<li>${esc(m[0])}${m[2]>1?` ${m[2]}位`:""}</li>`).join("")}</ul></div>`:""}
+  </div>`;
+  drawPlan(t.id);
+  setTimeout(()=>$("#out .result")?.scrollIntoView({behavior:"smooth",block:"start"}),50);
+}
+
+function search(){
+  const raw = $("#q").value.trim(), q = norm(raw);
+  if(!q){ $("#out").innerHTML=""; drawPlan(null); return; }
+  const hits = GUESTS.map((g,i)=>[g,i]).filter(([g])=>norm(g[0]).includes(q));
+  const exact = hits.filter(([g])=>norm(g[0])===q);
+  const pick = exact.length===1 ? exact : (hits.length===1 ? hits : null);
+  if(pick){ showGuest(pick[0][1]); return; }
+  drawPlan(null);
+  if(!hits.length){
+    $("#out").innerHTML = `<div class="empty">找不到「${esc(raw)}」<br>名單上多半寫的是家中代表的名字，可以試試家人的名字<br>或洽詢入口接待人員 🙏</div>`;
+    return;
+  }
+  $("#out").innerHTML = `<div class="empty">請選擇您的名字</div><div class="choices">${
+    hits.slice(0,16).map(([g,i])=>`<button type="button" data-i="${i}">${esc(g[0])}${exact.length>1||hits.filter(h=>h[0][0]===g[0]).length>1?`（第${g[1]}桌）`:""}</button>`).join("")
+  }</div>`;
+}
+let timer;
+$("#q").addEventListener("input", ()=>{clearTimeout(timer); timer=setTimeout(search,250);});
+$("#searchForm").addEventListener("submit", e=>{e.preventDefault(); search(); $("#q").blur();});
+$("#out").addEventListener("click", e=>{
+  const b = e.target.closest("button[data-i]"); if(!b) return;
+  const i=+b.dataset.i; $("#q").value = GUESTS[i][0]; showGuest(i);
+});
+drawPlan(null);
+
+/* ---------- Album ---------- */
+(function(){
+  const url = (CONFIG.albumUrl||"").trim();
+  $("#albumTag").textContent = CONFIG.albumName;
+  if(!url){
+    $("#albumBtn").classList.add("disabled");
+    $("#albumNotice").hidden = false;
+    $("#qrbox").hidden = true;
+    return;
+  }
+  $("#albumBtn").href = url;
+  try{ new QRCode($("#qr"), {text:url, width:208, height:208, colorDark:"#3b302a", colorLight:"#ffffff"}); }
+  catch(e){ $("#qrbox").hidden = true; }
+})();
+</script>
+</body>
+</html>
