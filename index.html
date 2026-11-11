@@ -138,14 +138,12 @@
   <nav id="nav">
     <a href="#seat">找座位</a>
     <a href="#schedule">流程</a>
-    <a href="#info">交通・聯絡</a>
+    <a href="#info">現場資訊</a>
     <a href="#photos">照片</a>
     <a href="#wishes">祝福留言</a>
     <a href="#story">我們的故事</a>
   </nav>
   <div class="minis">
-    <a class="mini" id="gcal" target="_blank" rel="noopener">📅 加入 Google 行事曆</a>
-    <button class="mini" id="ics" type="button">📆 加入手機行事曆</button>
     <a class="mini" id="lineShare" target="_blank" rel="noopener">💬 分享到 LINE</a>
   </div>
 </header>
@@ -176,14 +174,8 @@
 
   <section id="info">
     <div class="card">
-      <h2>交通・聯絡</h2>
+      <h2>現場資訊</h2>
       <p class="sub">有任何問題都可以找我們</p>
-      <div class="block" id="b-map">
-        <h3>📍 地點</h3>
-        <p id="addr"></p>
-        <a class="btn" id="mapBtn" target="_blank" rel="noopener" style="margin-top:12px">用 Google 地圖導航</a>
-      </div>
-      <div class="block" id="b-park"><h3>🚗 停車</h3><ul id="park"></ul></div>
       <div class="block" id="b-contact"><h3>☎️ 聯絡人</h3><ul id="contacts"></ul></div>
       <div class="block" id="b-wifi"><h3>📶 Wi-Fi</h3>
         <div class="row"><div><small>網路名稱</small><b id="wifiName"></b><small style="margin-top:4px">密碼</small><b id="wifiPw"></b></div><button type="button" id="wifiCopy">複製密碼</button></div>
@@ -245,9 +237,6 @@ const CONFIG = {
   venue: "小班長的家",
   start: "2026-11-14T17:30:00+08:00",       // 迎賓開始時間
   end:   "2026-11-14T21:30:00+08:00",
-  address: "",                             // 場地完整地址（填了才會顯示）
-  mapQuery: "小班長的家",                  // Google 地圖搜尋字（有地址時會用地址）
-  parking: [],                             // 例如 ["停車場 1：OO路 OO 號（免費）", "機車可停門口"]
   contacts: [],                            // 例如 [{role:"總招待", name:"OOO", phone:"0912-345-678"}]
   wifi: {name:"", password:""},
   menu: [],                                // 例如 ["龍蝦沙拉", "佛跳牆", ...]
@@ -422,28 +411,8 @@ drawPlan(null);
   tick(); setInterval(tick,1000);
 })();
 
-/* ---------- Calendar & share ---------- */
-(function(){
-  const title = `${CONFIG.groom} & ${CONFIG.bride} 婚宴`;
-  const loc = CONFIG.address || CONFIG.venue;
-  const z = d => new Date(d).toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,"");
-  const details = `座位查詢：${location.href}`;
-  $("#gcal").href = "https://calendar.google.com/calendar/render?action=TEMPLATE"
-    + "&text="+encodeURIComponent(title)+"&dates="+z(CONFIG.start)+"/"+z(CONFIG.end)
-    + "&location="+encodeURIComponent(loc)+"&details="+encodeURIComponent(details);
-  $("#ics").addEventListener("click", ()=>{
-    const ics = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//wedding//TW","BEGIN:VEVENT",
-      "UID:wedding-20261114@"+location.hostname,"DTSTAMP:"+z(new Date()),
-      "DTSTART:"+z(CONFIG.start),"DTEND:"+z(CONFIG.end),
-      "SUMMARY:"+title,"LOCATION:"+loc,"DESCRIPTION:"+details,
-      "BEGIN:VALARM","TRIGGER:-PT2H","ACTION:DISPLAY","DESCRIPTION:"+title,"END:VALARM",
-      "END:VEVENT","END:VCALENDAR"].join("\r\n");
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([ics],{type:"text/calendar"}));
-    a.download = "wedding.ics"; document.body.appendChild(a); a.click(); a.remove();
-  });
-  $("#lineShare").href = "https://social-plugins.line.me/lineit/share?url="+encodeURIComponent(location.href);
-})();
+/* ---------- Share ---------- */
+$("#lineShare").href = "https://social-plugins.line.me/lineit/share?url="+encodeURIComponent(location.href);
 
 /* ---------- Schedule ---------- */
 $("#timeline").innerHTML = CONFIG.schedule.map(x=>`<li><div class="tm">${esc(x.time||"")}</div><div class="tx"><b>${esc(x.title)}</b>${x.note?`<small>${esc(x.note)}</small>`:""}</div></li>`).join("");
@@ -451,9 +420,6 @@ $("#timeline").innerHTML = CONFIG.schedule.map(x=>`<li><div class="tm">${esc(x.t
 /* ---------- Info ---------- */
 (function(){
   const hide = id => { $(id).hidden = true; };
-  $("#addr").innerHTML = `<b>${esc(CONFIG.venue)}</b>${CONFIG.address?`<br>${esc(CONFIG.address)}`:""}<br><small style="color:var(--muted)">宴會廳：巴黎廳＋羅馬廳</small>`;
-  $("#mapBtn").href = "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(CONFIG.address || CONFIG.mapQuery);
-  if(CONFIG.parking.length) $("#park").innerHTML = CONFIG.parking.map(p=>`<li class="row"><span>${esc(p)}</span></li>`).join(""); else hide("#b-park");
   if(CONFIG.contacts.length) $("#contacts").innerHTML = CONFIG.contacts.map(c=>`<li class="row"><div><small>${esc(c.role||"")}</small><b>${esc(c.name||"")}</b><small>${esc(c.phone||"")}</small></div>${c.phone?`<a href="tel:${esc(c.phone.replace(/[^\d+]/g,""))}">撥打</a>`:""}</li>`).join(""); else hide("#b-contact");
   if(CONFIG.wifi.name){
     $("#wifiName").textContent = CONFIG.wifi.name; $("#wifiPw").textContent = CONFIG.wifi.password || "（免密碼）";
@@ -462,8 +428,9 @@ $("#timeline").innerHTML = CONFIG.schedule.map(x=>`<li><div class="tm">${esc(x.t
   } else hide("#b-wifi");
   if(CONFIG.menu.length){ $("#menu").innerHTML = CONFIG.menu.map(m=>`<li>${esc(m)}</li>`).join(""); $("#vegNote").textContent = CONFIG.vegNote; } else hide("#b-menu");
 
-  // 祝福留言、故事：沒填就整區隱藏，連導覽列一起
+  // 沒填的區塊整區隱藏，連導覽列一起
   const hideSec = id => { $(id).hidden = true; const a = document.querySelector(`#nav a[href="${id}"]`); if(a) a.remove(); };
+  if(![...document.querySelectorAll("#info .block")].some(b=>!b.hidden)) hideSec("#info");
   if(CONFIG.formUrl) $("#formBtn").href = CONFIG.formUrl; else hideSec("#wishes");
   if(CONFIG.story.paragraphs.length){
     $("#storySub").textContent = CONFIG.story.subtitle || "";
